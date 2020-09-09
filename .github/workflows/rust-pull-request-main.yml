@@ -34,5 +34,5 @@ jobs:
           title: Upgrade virtual Rust in main from ${{ steps.apply-patch-main.outputs.VERSION_OLD }} to ${{ steps.fetch-latest-release.outputs.VERSION_MAIN }}
           commit-message: Upgrade virtual Rust in main from ${{ steps.apply-patch-main.outputs.VERSION_OLD }} to ${{ steps.fetch-latest-release.outputs.VERSION_MAIN }}
           body: Upgrade virtual Rust in main from ${{ steps.apply-patch-main.outputs.VERSION_OLD }} to ${{ steps.fetch-latest-release.outputs.VERSION_MAIN }}
-            This PR should be merged together with a corresponding PR in coreos-overlay for `dev-lang/rust` ${{ steps.fetch-latest-release.outputs.VERSION_MAIN }}.
+            This PR should be merged together with a corresponding PR in coreos-overlay for [`dev-lang/rust` ${{ steps.fetch-latest-release.outputs.VERSION_MAIN }}](https://github.com/dongsupark/coreos-overlay/pull/${{ github.event.client_payload.coreos-overlay-pull-request-number}}).
           labels: main
