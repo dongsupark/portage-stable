@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy pypy3 )
+PYTHON_COMPAT=( python3_{7,8,9} pypy3 )
 
 inherit distutils-r1
 
@@ -13,17 +13,11 @@ SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x64-cygwin ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris"
-IUSE="test"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv s390 sparc x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 
 RDEPEND="dev-python/ply:=[${PYTHON_USEDEP}]"
-DEPEND="${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	test? ( dev-python/nose[${PYTHON_USEDEP}] )"
-
-PATCHES=(
-	"${FILESDIR}"/pycparser-2.18-OO.patch
-)
+BDEPEND="${RDEPEND}
+	dev-python/setuptools[${PYTHON_USEDEP}]"
 
 python_prepare_all() {
 	# remove the original files to guarantee their regen
@@ -47,6 +41,16 @@ python_compile() {
 }
 
 python_test() {
+	# Skip tests if cpp is not in PATH
+	type -P cpp >/dev/null || return 0
 	# change workdir to avoid '.' import
-	nosetests -v -w tests || die
+	cd tests || die
+	"${EPYTHON}" -m unittest discover -v || die "Tests fail with ${EPYTHON}"
+}
+
+python_install() {
+	distutils-r1_python_install
+
+	# setup.py generates {c_ast,lextab,yacctab}.py with bytecode disabled.
+	python_optimize
 }
